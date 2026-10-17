@@ -335,6 +335,13 @@ Liste au 17 octobre 2026, par ordre de priorité.
     des adresses absentes du rôle d'évaluation (comme le logement
     9999-2225 chemin du Lac-Gagnon Ouest ou le 34 chemin de la
     Pointe-à-Baptiste, à Duhamel), pour les signalements au MRNF.
+14. **Rôle d'évaluation foncière** du ministère des Affaires municipales
+    et de l'Habitation (MAMH), géoréférencé, comme source
+    supplémentaire : il sert à repérer les anomalies du point 13 et à
+    apparier les portes d'entrée du point 11 par matricule. Le MAMH a lui
+    aussi donné une [permission explicite pour
+    OSM](https://wiki.openstreetmap.org/wiki/FR:Minist%C3%A8re_des_Affaires_municipales_et_de_l%27Habitation)
+    pour ses données ouvertes.
 
 ## Tests
 
