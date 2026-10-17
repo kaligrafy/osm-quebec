@@ -2,7 +2,7 @@
 
 Données OSM : extrait quebec-latest.osm.pbf du 2026-10-16.
 
-Source : Découpages administratifs du MRNF (1/20 000). Règles : voir le [README](../../README.md#régions). Carte : [regions.geojson](regions.geojson) (bleu : MRNF; rouge : OSM actuel). Commentaires : [README](README.md).
+Source : Découpages administratifs du MRNF (1/20 000). Règles : voir le [README](../../README.md#régions). Carte : [regions.geojson](regions.geojson) (propriété `source` : MRNF ou OSM actuel). Commentaires : [README](README.md).
 
 ## Limites actuelles dans OSM
 

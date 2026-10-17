@@ -24,8 +24,11 @@ communauté. Pour chaque lieu, `rapports/LIEU/` contient :
   valider, questions en suspens;
 - `regions.md`, `rues.md` et `adresses.md`, les rapports générés, avec
   leurs tableaux;
-- les GeoJSON correspondants, que GitHub affiche sur une carte (vert :
-  nouveau; orange : corrigé; gris : déjà là; rouge : à revoir).
+- les GeoJSON correspondants, que GitHub affiche sur une carte. Chaque
+  objet porte ses propriétés (`statut` pour les adresses et les rues,
+  `source` pour les limites, `coupure` pour les routes) : ce sont elles
+  qui font foi. Les couleurs suivent la convention simplestyle, que tous
+  les afficheurs ne respectent pas.
 
 | Lieu | Municipalités | Limites : adresses mal placées dans OSM | Rues à renommer | Adresses prêtes | Adresses à revoir |
 |---|---|---|---|---|---|

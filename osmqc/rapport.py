@@ -109,7 +109,7 @@ def regions(lieu, conf, officiel, rels, compte, ecarts, plan, supp):
         s += "Données OSM : %s.\n\n" % conf["_source_osm"]
     s += ("Source : Découpages administratifs du MRNF (1/20 000). Règles : voir le "
           "[README](../../README.md#régions). Carte : [regions.geojson](regions.geojson) "
-          "(bleu : MRNF; rouge : OSM actuel). Commentaires : [README](README.md).\n\n")
+          "(propriété `source` : MRNF ou OSM actuel). Commentaires : [README](README.md).\n\n")
     s += "## Limites actuelles dans OSM\n\n"
     s += tableau(["Municipalité", "Relation", "Anneaux", "Chemins qui la forment"], [
         [r.tags.get("name", code), "[%d](https://www.openstreetmap.org/relation/%d)" % (r.id, r.id),
