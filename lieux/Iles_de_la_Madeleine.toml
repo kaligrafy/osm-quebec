@@ -1,0 +1,49 @@
+# Les Îles-de-la-Madeleine : banc d'essai (rencontre du 16 octobre 2026,
+# https://community.openstreetmap.org/t/148901). Les deux municipalités :
+# Les Îles-de-la-Madeleine et Grosse-Île.
+
+nom = "Les Îles-de-la-Madeleine"
+
+[rqa]
+municipalites = ["01023", "01042"]
+
+[regions]
+# Relations de limite d'OSM, par code géographique du MRNF.
+osm = { "01023" = 8402197, "01042" = 8402196 }
+# Le contour extérieur des Îles est celui de la Communauté maritime
+# (identique au MRNF). Il est fait de limites interprovinciales en mer :
+# on réutilise les chemins de la relation de la Communauté maritime
+# plutôt que d'en tracer de nouveaux. Retirer cette ligne pour tout
+# tracer d'après le MRNF.
+exterieur = 8405826
+
+[regions.groupe]
+comment = "Limites municipales des Îles-de-la-Madeleine et de Grosse-Île d'après les Découpages administratifs du MRNF, sur des chemins distincts du littoral"
+source = "Découpages administratifs (MRNF), version V2026-09"
+discussion = ""
+
+[adresses]
+supprimer_interpolations = true
+corriger_rue_existante = true
+creer_si_rue_absente = false
+exclure = []
+
+[rues]
+
+# Le tronçon de l'ancienne municipalité de Cap-aux-Meules porte un nom
+# officiel distinct (Commission de toponymie, RQA, Postes Canada).
+[[rues.modifier]]
+type = "way"
+id = 1221212557
+tags = { name = "Chemin de Gros-Cap", alt_name = "Chemin du Gros-Cap" }
+raison = "nom officiel du tronçon de Cap-aux-Meules (43 à 325); alt_name : nom porté jusqu'ici dans OSM"
+
+[rues.groupe]
+comment = "Noms de rue des Îles-de-la-Madeleine selon les odonymes officiels (casse, accents)"
+source = "Référentiel québécois des adresses (MRNF), version AQ20261001"
+discussion = ""
+
+[adresses.groupe]
+comment = "Adresses des Îles-de-la-Madeleine d'après le Référentiel québécois des adresses"
+source = "Référentiel québécois des adresses (MRNF), version AQ20261001"
+discussion = ""

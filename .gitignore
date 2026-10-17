@@ -1,0 +1,13 @@
+# Secrets : jetons OAuth, clés du forum, identifiants d'application
+.jeton*
+.client_id
+.forum-cle
+.forum-sujet
+# Données téléchargées et fichiers produits (régénérables)
+donnees/*
+!donnees/README.md
+sortie/
+*.zip
+*.gpkg
+__pycache__/
+*.swp

@@ -1,0 +1,58 @@
+# La Petite-Nation : la MRC de Papineau (Outaouais), dont Duhamel,
+# Lac-Simon et Chénéville. Municipalités : toutes celles de la MRC selon
+# le MRNF.
+
+nom = "La Petite-Nation (MRC de Papineau)"
+
+[regions]
+mrc = "80"
+# Relation de la MRC dans OSM : ses chemins servent au contour extérieur.
+exterieur = 7572164
+# Relations des municipalités dans OSM (python3 -m osmqc regions trouver).
+# Notre-Dame-de-la-Salette est rattachée à une autre MRC dans OSM; le
+# TNO aquatique (rivière des Outaouais) n'a pas de relation.
+[regions.osm]
+"80005" = 7572123   # Fassett
+"80010" = 7572125   # Montebello
+"80015" = 7572124   # Notre-Dame-de-Bonsecours
+"80020" = 7572128   # Notre-Dame-de-la-Paix
+"80027" = 7572130   # Saint-André-Avellin
+"80037" = 7572131   # Papineauville
+"80045" = 7572132   # Plaisance
+"80050" = 7549956   # Thurso
+"80055" = 7549955   # Lochaber
+"80060" = 7549957   # Lochaber-Partie-Ouest
+"80065" = 7547233   # Mayo
+"80070" = 7549954   # Saint-Sixte
+"80078" = 7547231   # Ripon
+"80085" = 7547232   # Mulgrave-et-Derry
+"80087" = 7570624   # Notre-Dame-de-la-Salette
+"80090" = 7362050   # Montpellier
+"80095" = 7362049   # Lac-Simon
+"80103" = 7572129   # Chénéville
+"80110" = 7572127   # Namur
+"80115" = 7572122   # Boileau
+"80125" = 7572126   # Saint-Émile-de-Suffolk
+"80130" = 7362399   # Lac-des-Plages
+"80135" = 7361793   # Duhamel
+"80140" = 7361939   # Val-des-Bois
+"80145" = 7361798   # Bowman
+# "80990" : TNO aquatique de la MRC de Papineau, absente d'OSM (ou sans ref:qc)
+
+[regions.groupe]
+comment = "Limites municipales de la MRC de Papineau d'après les Découpages administratifs du MRNF"
+source = "Découpages administratifs (MRNF), version V2026-09"
+discussion = ""
+
+[adresses]
+supprimer_interpolations = true
+corriger_rue_existante = true
+creer_si_rue_absente = false
+exclure = [
+  { municipalite = "80135", rue = "Chemin du Tour-du-Lac", numero = "131", raison = "131 chemin du Tour-du-Lac : absent du rôle d'évaluation, « Incertaine », sans lot" },
+]
+
+[adresses.groupe]
+comment = "Adresses de la MRC de Papineau d'après le Référentiel québécois des adresses"
+source = "Référentiel québécois des adresses (MRNF), version AQ20261001"
+discussion = ""
