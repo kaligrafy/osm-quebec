@@ -87,10 +87,17 @@ dans `sortie/LIEU/` (hors du dépôt); les rapports de révision, dans
 ### Ordre des étapes
 
 1. **Les limites municipales** d'abord : la municipalité d'une adresse
-   se déduit alors de la limite qui la contient, sans `addr:city` sur
-   chaque nœud.
+   se déduit alors de la limite qui la contient. Nominatim et Photon
+   (construit sur la base de Nominatim) utilisent les limites, mais
+   rattachent chaque adresse à sa rue, et chaque chemin de rue à une
+   seule municipalité : d'où la coupure des rues aux limites (voir
+   Régions, règle 7). Pelias n'utilise ni les limites d'OSM ni
+   `addr:city` (il prend Who's On First). OsmAnd n'utilise une limite que
+   si elle est liée à son nœud de lieu (voir Régions, règle 8). Voir la
+   [discussion sur les géocodeurs](https://community.openstreetmap.org/t/148901).
 2. **Les rues** ensuite : une adresse n'est créée que si sa rue existe
-   dans OSM sous son nom officiel.
+   dans OSM sous son nom officiel. Les anciens noms ou noms alternatifs
+   sont conservés dans les tags old_name et alt_name.
 3. **Les adresses** enfin.
 
 ### Régions
@@ -113,22 +120,47 @@ dans `sortie/LIEU/` (hors du dépôt); les rapports de révision, dans
 5. **Ce qui sort des relations** : le littoral et les autres objets sont
    seulement retirés des relations, sans être modifiés. Une simple ligne
    de limite qui ne sert plus à aucune relation est supprimée, avec ses
-   nœuds s'ils ne servent à rien d'autre dans OSM.
+   nœuds s'ils ne servent à rien d'autre dans OSM. **Exception** : un
+   chemin qui porte `note`, `fixme`, `description` ou une étiquette
+   `disputed*` n'est jamais supprimé automatiquement (par exemple la
+   frontière avec Terre-Neuve-et-Labrador, que le gouvernement du Québec
+   considère comme non définitive) : il est signalé dans le rapport et
+   traité à la main, et sa note est reportée sur le chemin qui le
+   remplace. Les étiquettes des relations ne sont jamais modifiées;
+   seuls leurs membres changent. Les frontières provinciales et
+   internationales (`admin_level` 4 et 2) peuvent être réutilisées, mais
+   ne sont jamais modifiées.
 6. **Vérification** : le rapport compare la municipalité de chaque
    adresse du RQA selon le MRNF, les limites actuelles d'OSM et les
    limites proposées.
-7. **Routes qui traversent les limites** : une route nommée doit être
-   coupée là où elle traverse une limite, à moins de 25 m. Le rapport
-   classe chaque croisement : déjà coupé, coupure à ajouter, coupure à
-   déplacer, ou coupure devenue inutile (sur l'ancienne limite, entre
-   deux segments aux étiquettes identiques). Rien n'est encore modifié.
+7. **Routes qui traversent les limites** : une route nommée est coupée
+   exactement là où elle traverse une limite, même si ses étiquettes
+   sont identiques des deux côtés. Raison : Nominatim (et donc Photon)
+   lie chaque chemin de rue à une seule municipalité, et chaque adresse
+   hérite de la municipalité de sa rue. Un nœud est ajouté sur la route
+   au point de croisement, sans en modifier la géométrie, et le chemin
+   est coupé en deux à ce nœud. Ce nœud n'est pas partagé avec le chemin
+   de limite (voir la règle 2). Le rapport classe chaque croisement :
+   déjà coupé, coupure à ajouter, coupure à déplacer, ou coupure devenue
+   inutile (sur l'ancienne limite, entre deux segments aux étiquettes
+   identiques). Rien n'est encore modifié.
+8. **Lien avec le nœud de lieu** : chaque relation municipale doit avoir
+   un membre `label` (ou `admin_centre`) qui pointe vers un nœud `place`
+   portant exactement le même `name` que la relation. Sans ce lien,
+   OsmAnd n'utilise pas la limite pour attribuer les adresses. Les
+   membres existants sont conservés; le rapport signale les relations
+   sans lien ou dont les noms diffèrent.
 
 ### Rues
 
 1. **Nom officiel** : l'odonyme recomposé du RQA (repris de la
    Commission de toponymie), dans l'ordre usuel (« 4e Rang Sud »), sans
    le discriminant des municipalités fusionnées (« Chemin du Gros-Cap »
-   et non « Chemin du Gros-Cap (L'Étang-du-Nord) »).
+   et non « Chemin du Gros-Cap (L'Étang-du-Nord) »). Le discriminant
+   correspond en général à la localité postale (Postes Canada). Selon le
+   wiki, c'est le rôle d'`addr:city` (la ville de l'adresse postale), et
+   non de `contact:*`, qui sert à une adresse de contact différente de
+   l'adresse physique. Son ajout est à décider (voir Adresses, règle 6).
 2. **Renommage automatique** seulement quand le nom d'OSM ne diffère du
    nom officiel que par la casse, les accents, les tirets ou les espaces
    (« Chemin de la Martinique » devient « Chemin de La Martinique »).
@@ -145,9 +177,13 @@ dans `sortie/LIEU/` (hors du dépôt); les rapports de révision, dans
 
 1. **Une adresse par numéro de base et par rue.** Le RQA répète le
    point pour chaque logement d'un immeuble (2-1701, 329 1) : seul le
-   numéro de base est créé. Un suffixe (120A) au même point que son
-   numéro de base est fusionné; placé à plus de 5 m, il devient une
-   adresse distincte.
+   numéro de base est créé. Les numéros de logement (2-1701, 329 1)
+   vont dans `addr:unit`, séparés par « ; ». Un suffixe en lettre (120A)
+   au même point que son numéro de base est fusionné et ajouté à
+   `addr:housenumber` (« 120;120A;120B »); placé à plus de 5 m, il
+   devient une adresse distincte. À valider : un suffixe en lettre que
+   Postes Canada traite comme un logement devrait aller dans
+   `addr:unit` plutôt que dans `addr:housenumber`.
 2. **Adresses terminées** (`date_fin` remplie) : ignorées.
 3. **Exclusions** : une liste explicite, avec la raison, dans le fichier
    du lieu (par exemple une adresse absente du rôle d'évaluation).
@@ -160,8 +196,13 @@ dans `sortie/LIEU/` (hors du dépôt); les rapports de révision, dans
    On y corrige `addr:street` s'il diffère du nom officiel et on y
    ajoute `addr:postcode` s'il manque. Rien d'autre n'est touché.
 6. **Étiquettes créées** : `addr:housenumber`, `addr:street`,
-   `addr:postcode`. Pas d'`addr:city` (voir l'ordre des étapes).
-   Pas d'identifiant du RQA dans OSM.
+   `addr:postcode`. `addr:city` : à décider par la communauté. Aucun
+   géocodeur courant n'en a besoin pour trouver la municipalité, qui
+   vient des limites. S'il est ajouté, ce sera la localité postale de
+   Postes Canada (définition du wiki), pas la municipalité officielle;
+   Nominatim l'ajoute alors aux termes de recherche de l'adresse. Pas
+   d'identifiant du RQA dans OSM (sauf si la communauté décide de
+   l'inclure).
 7. **Interpolations CanVec** : une ligne `addr:interpolation` est
    supprimée avec ses nœuds, puisque les vraies adresses la remplacent,
    si ses deux extrémités portent le nom d'une rue importée, si elle passe
@@ -172,8 +213,12 @@ dans `sortie/LIEU/` (hors du dépôt); les rapports de révision, dans
    donnée (section `[adresses.positions]`, par exemple les portes d'entrée
    placées à la main sur l'imagerie). Le point de cette source est relié
    à l'adresse par le matricule, le lot, l'identifiant du RQA ou
-   l'adresse elle-même; trop loin du point du RQA (150 m par défaut), il
-   est ignoré. Le rapport indique la source retenue pour chaque adresse.
+   l'adresse elle-même; trop loin d'un point du RQA (150 m par défaut),
+   il est ignoré et sera corrigé manuellement plus tard. Le rapport
+   indique la source retenue pour chaque adresse. Une étiquette
+   `entrance=*` (`main`, `home` ou `shop`, selon le type de bâtiment et
+   d'adresse dans le rôle foncier) n'est ajoutée que si le point est sur
+   le contour du bâtiment.
 
 ### Groupe de modifications
 
@@ -315,30 +360,37 @@ Liste au 17 octobre 2026, par ordre de priorité.
    membre de la bonne MRC (Notre-Dame-de-la-Salette).
 7. **Anciennes municipalités** (niveau 9 ou 10) : simple à coder, mais il
    manque une source autorisée pour les tracés.
+8. **Notes sur les chemins de limite** : aujourd'hui, `genre_chemin()`
+   (`osmqc/regions.py`) classe un chemin qui porte `note` comme « limite
+   seule », donc supprimable. Le retirer de cette liste, signaler ces
+   chemins dans le rapport et reporter leur note sur le chemin neuf.
+9. **Lien limite–lieu** : vérifier pour chaque relation le membre
+   `label` ou `admin_centre` et l'égalité exacte des noms (règle 8).
 
 ### Rues
 
-8. **Nommer les voies sans nom** quand une seule voie dessert toutes les
-   adresses d'une rue, si la communauté accepte la règle.
-9. **`addr:place`** pour les adresses sans rue (Île du Canard-Blanc).
-10. **Abréviations** (« St- » ou « Saint- ») : une règle, une fois
-    tranché qui fait autorité.
+10. **Nommer les voies sans nom** quand une seule voie dessert toutes les
+    adresses d'une rue, si la communauté accepte la règle.
+11. **`addr:place`** pour les adresses sans rue (Île du Canard-Blanc).
+12. **Abréviations** (« St- » ou « Saint- ») : remplacer toutes les
+    abréviations par la forme complète, selon la règle d'OSM
+    ([Abbreviations](https://wiki.openstreetmap.org/wiki/Abbreviations)).
 
 ### Adresses
 
-11. **Portes d'entrée** de la Chaire Mobilité : prêt dans l'outil
+13. **Portes d'entrée** de la Chaire Mobilité : prêt dans l'outil
     (section `[adresses.positions]`), il manque les données.
-12. **Interpolations** : ne supprimer une ligne que si sa rue reçoit
+14. **Interpolations** : ne supprimer une ligne que si sa rue reçoit
     vraiment des adresses (aujourd'hui, une rue « à revoir » peut perdre
     son interpolation sans rien recevoir).
-13. **Anomalies du RQA** : liste automatique des logements sans lot et
+15. **Anomalies du RQA** : liste automatique des logements sans lot et
     des adresses absentes du rôle d'évaluation (comme le logement
     9999-2225 chemin du Lac-Gagnon Ouest ou le 34 chemin de la
     Pointe-à-Baptiste, à Duhamel), pour les signalements au MRNF.
-14. **Rôle d'évaluation foncière** du ministère des Affaires municipales
+16. **Rôle d'évaluation foncière** du ministère des Affaires municipales
     et de l'Habitation (MAMH), géoréférencé, comme source
-    supplémentaire : il sert à repérer les anomalies du point 13 et à
-    apparier les portes d'entrée du point 11 par matricule. Le MAMH a lui
+    supplémentaire : il sert à repérer les anomalies du point 15 et à
+    apparier les portes d'entrée du point 13 par matricule. Le MAMH a lui
     aussi donné une [permission explicite pour
     OSM](https://wiki.openstreetmap.org/wiki/FR:Minist%C3%A8re_des_Affaires_municipales_et_de_l%27Habitation)
     pour ses données ouvertes.
